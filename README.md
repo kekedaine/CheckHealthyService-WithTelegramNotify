@@ -23,7 +23,7 @@ module.exports = [
         ]
     },
     {
-        name: 'daitest',
+        name: 'my_service',
         endpoint: 'http://localhost:8000',
         timeout: 5000,
         retries: 3,
