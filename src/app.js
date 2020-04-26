@@ -58,7 +58,7 @@ async function run(_service) {
 
         setTimeout(() => {
             run(service)
-        }, (service.timeout + 50));
+        }, (service.interval));
     } catch (e) {
         console.log(e);
     }

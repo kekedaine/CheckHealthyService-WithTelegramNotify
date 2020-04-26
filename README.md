@@ -1,5 +1,7 @@
 # CheckHealthyService-WithTelegramNotify
-Check Health yService-With Telegram Notify
+Check Healthy Service-With Telegram Notify
+
+
 
 create folder config/
 
@@ -11,6 +13,7 @@ module.exports = [
         endpoint: 'https://www.google.com/',
         timeout: 5000,
         retries: 3,
+        interval: 10000,
         notifications: [
             {
                 type: 'telegram',
@@ -24,6 +27,7 @@ module.exports = [
         endpoint: 'http://localhost:8000',
         timeout: 5000,
         retries: 3,
+        interval: 10000,
         notifications: [
             {
                 type: 'telegram',
