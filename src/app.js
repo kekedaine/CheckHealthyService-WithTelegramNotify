@@ -3,6 +3,7 @@ import Blurbird from 'bluebird'
 import axios from 'axios'
 import _ from 'lodash'
 import * as Notification from './notification'
+const si = require('systeminformation');
 console.log("Check Health Service");
 console.log(services)
 
@@ -13,6 +14,7 @@ async function run(_service) {
         if (!data[service.name]) {
             data[service.name] = {
                 is_ok: true,
+                is_ok_lastest: true,
                 is_prepare: false,
                 attempts: 0
             }
@@ -21,6 +23,7 @@ async function run(_service) {
         await axios.get(service.endpoint, { timeout: service.timeout })
             .then(function (response) {
                 console.log('data OK = ', data[service.name]);
+                data[service.name].is_ok_lastest = true
                 if (!data[service.name].is_ok) {
                     data[service.name].attempts++
                     data[service.name].is_prepare = true
@@ -29,10 +32,10 @@ async function run(_service) {
                         data[service.name].attempts = 0
                         data[service.name].is_prepare = false
                         console.log('PUSH TO NOTIFY: UPPPPPP = ', service.name);
-                        Notification.sendNotify(service, true)
+                        Notification.sendNotify(service, "UP")
                     }
-                }else {
-                    if(data[service.name].is_prepare){
+                } else {
+                    if (data[service.name].is_prepare) {
                         data[service.name].attempts = 0
                     }
                 }
@@ -47,10 +50,17 @@ async function run(_service) {
                         data[service.name].attempts = 0
                         data[service.name].is_prepare = false
                         console.log('PUSH TO NOTIFY SERVER : DOWNNNNNNNNNNNNN = ', service.name);
-                        Notification.sendNotify(service, false)
+                        Notification.sendNotify(service, "DOWN")
                     }
-                }else{
-                    if(data[service.name].is_prepare){
+
+                    if (data[service.name].is_ok_lastest) {
+                        // push notify warning
+                        Notification.sendNotify(service, "WARNING")
+                        data[service.name].is_ok_lastest = false
+                    }
+
+                } else {
+                    if (data[service.name].is_prepare) {
                         data[service.name].attempts = 0
                     }
                 }
@@ -73,3 +83,11 @@ async function main() {
 }
 
 main()
+
+// data.currentload: check cpu self host
+
+// setInterval(() => {
+//     si.currentLoad()
+//         .then(data => console.log(data.currentload))
+//         .catch(error => console.error(error));
+// }, 1000)
